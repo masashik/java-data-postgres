@@ -1,0 +1,41 @@
+version: '3.8'  # Updated to modern Compose spec
+
+services:
+  database:
+    image: masashica/java-web-data-postgres-db
+    container_name: java-web-data-postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ostock_dev
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./data.sql:/docker-entrypoint-initdb.d/2-data.sql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  java-web-data-access:
+    image: masashica/java-data-postgres
+    container_name: java-data-postgres
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/ostock_dev
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+networks:
+  backend:
+    driver: bridge
