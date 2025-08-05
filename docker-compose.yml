@@ -1,8 +1,6 @@
-version: '3.8'  # Updated to modern Compose spec
-
 services:
   database:
-    image: masashica/java-web-data-postgres-db
+    image: postgres:latest
     container_name: java-web-data-postgres-db
     ports:
       - "5432:5432"

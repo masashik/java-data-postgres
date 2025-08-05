@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre
+FROM --platform=linux/amd64 openjdk:17-jdk-slim
 
 WORKDIR /app
 
