@@ -1,0 +1,52 @@
+module(name = "java_data_postgres")
+
+bazel_dep(name = "rules_jvm_external", version = "6.8")
+bazel_dep(name = "contrib_rules_jvm", version = "0.29.0")
+bazel_dep(name = "rules_spring", version = "2.6.3")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+
+maven.install(
+    # ← ここがポイント：BOM は boms に書く
+    boms = [
+        "org.springframework.boot:spring-boot-dependencies:3.3.0",
+    ],
+    artifacts = [
+        "org.springframework.boot:spring-boot-loader",
+        "org.junit.platform:junit-platform-launcher",
+        "org.junit.platform:junit-platform-reporting",
+        # Spring 管理の依存は version 省略でOK（BOMが解決）
+        "junit:junit:4.12",
+        "com.google.guava:guava:28.0-jre",
+        "org.springframework.boot:spring-boot-starter-hateoas",
+        "org.springframework.boot:spring-boot-starter-data-jpa",
+        "org.springframework.boot:spring-boot-starter-web",
+        "org.springframework.boot:spring-boot-starter-test",
+        "org.springframework.boot:spring-boot-testcontainers",
+        "org.springframework.boot:spring-boot-starter-actuator",
+        "com.mysql:mysql-connector-j",
+        "org.junit.jupiter:junit-jupiter-engine:5.10.0",
+        "org.testcontainers:junit-jupiter",
+        "org.testcontainers:mysql",
+
+        #"org.springframework.boot:spring-boot-starter-data-jpa",
+        #"org.springframework.boot:spring-boot-starter-hateoas",
+        #"org.springframework.boot:spring-boot-starter-web",
+        #"org.springframework.boot:spring-boot-starter-test",
+        #"org.springframework.boot:spring-boot-testcontainers",
+        #"org.testcontainers:junit-jupiter",
+        #"org.testcontainers:mysql",
+
+        # Spring 管理外や固定したいものは明示バージョン
+        "org.postgresql:postgresql:42.6.0",
+        "org.mockito:mockito-core:5.12.0",
+        # 必要なら
+        "org.projectlombok:lombok:1.18.30",
+        # "junit:junit:4.13.2",
+        # "com.google.guava:guava:33.2.1-jre",
+    ],
+    repositories = ["https://repo1.maven.org/maven2"],
+    fetch_sources = True,
+)
+
+use_repo(maven, "maven")
